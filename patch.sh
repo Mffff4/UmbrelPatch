@@ -7,6 +7,25 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 BOLD='\033[1m'
 
+echo -e "\n${BLUE}${BOLD}UmbrelOS External Storage Patch${NC}"
+echo -e "${BLUE}===================================${NC}\n"
+
+echo -e "${RED}${BOLD}⚠️  WARNING: USE AT YOUR OWN RISK ⚠️${NC}"
+echo -e "This script modifies system files and requires a reboot."
+echo -e "Author: Mffff4"
+echo -e "GitHub: https://github.com/Mffff4/UmbrelPatch"
+echo -e "Bitbucket: https://bitbucket.org/mffff4/umbrelpatch\n"
+
+echo -e "${YELLOW}Starting in 5 seconds...${NC}"
+echo -e "${YELLOW}Press Ctrl+C to cancel${NC}\n"
+
+for i in {5..1}; do
+    echo -ne "${RED}${BOLD}$i ${NC}"
+    sleep 1
+done
+
+echo -e "\n${GREEN}Proceeding with patch...${NC}\n"
+
 FILE1="/opt/umbreld/source/modules/files/external-storage.ts"
 FILE2="/opt/umbreld/source/modules/is-umbrel-home.ts"
 
