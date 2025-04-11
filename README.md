@@ -2,7 +2,7 @@
 
 > ⚡ Enable external storage support on your UmbrelOS device with a single command
 
-![UmbrelOS](https://raw.githubusercontent.com/getumbrel/umbrel/master/apps/umbrel/public/img/icon.png)
+[![Bitbucket Repo](https://img.shields.io/badge/Bitbucket-0747a6?style=for-the-badge&logo=bitbucket&logoColor=white)](https://bitbucket.org/mffff4/umbrelpatch)
 
 ## ✨ Features
 
