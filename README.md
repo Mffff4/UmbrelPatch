@@ -16,7 +16,7 @@
 Copy and paste this command into your terminal:
 
 ```bash
-curl -sSL https://bitbucket.org/mffff4/umbrelpatch/raw/80ae2acff9196ada59b7f3e2892fcf587328498e/patch.sh | sudo bash
+curl -sSL https://bitbucket.org/mffff4/umbrelpatch/raw/main/patch.sh | sudo bash
 ```
 
 ## 🔧 What's Under the Hood
