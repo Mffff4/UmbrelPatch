@@ -1,84 +1,111 @@
 #!/bin/bash
 
-RED='\033[0;31m'
+# ==========================================
+# 🚀 UMBREL HOME TRANSFORMATION PROTOCOL 🚀
+# ==========================================
+# Author: @mffff4
+# GitHub: https://github.com/mffff4
+# ==========================================
+
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-BOLD='\033[1m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
 
-echo -e "\n${BLUE}${BOLD}UmbrelOS External Storage Patch${NC}"
-echo -e "${BLUE}===================================${NC}\n"
-echo -e "${RED}${BOLD}⚠️  WARNING: USE AT YOUR OWN RISK ⚠️${NC}"
-echo -e "This script modifies system files and requires a reboot."
-echo -e "Author: Mffff4"
-echo -e "GitHub: https://github.com/Mffff4/UmbrelPatch"
-echo -e "Bitbucket: https://bitbucket.org/mffff4/umbrelpatch\n"
-echo -e "${YELLOW}Starting in 5 seconds...${NC}"
-echo -e "${YELLOW}Press Ctrl+C to cancel${NC}\n"
+echo -e "\n${MAGENTA}/// INITIATING PROTOCOL @mffff4 ///${NC}"
+echo -e "${CYAN}Target:${NC} Transform Raspberry Pi into Elite Umbrel Home."
+echo -e "${CYAN}Status:${NC} Loading reality exploits..."
+sleep 2
 
-for i in {5..1}; do
-    echo -ne "${RED}${BOLD}$i ${NC}"
-    sleep 1
-done
+# --- VARS ---
+SRC_DIR="/opt/umbreld/source/modules"
+F_HOME="$SRC_DIR/is-umbrel-home.ts"
+F_SYS="$SRC_DIR/system/system.ts"
+F_MIG="$SRC_DIR/migration/migration.ts"
+F_EXT="$SRC_DIR/files/external-storage.ts"
 
-echo -e "\n${GREEN}Proceeding with patch...${NC}\n"
+# --- 1. BACKUP ---
+BACKUP_DIR="/home/umbrel/backup_$(date +%Y%m%d_%H%M%S)"
+echo -e "\n${CYAN}[1/5] 💾 Creating Restore Point (Backup)...${NC}"
+mkdir -p "$BACKUP_DIR"
 
-FILE1="/opt/umbreld/source/modules/files/external-storage.ts"
-FILE2="/opt/umbreld/source/modules/is-umbrel-home.ts"
+safe_backup() {
+    if [ -f "$1" ]; then
+        cp "$1" "$BACKUP_DIR/"
+        echo -e "   -> Saved: $(basename "$1")"
+    else
+        echo -e "   ${RED}-> Error: File $1 not found!${NC}"
+        exit 1
+    fi
+}
 
-PATCHED1=false
-PATCHED2=false
-PATCHED3=false
+safe_backup "$F_HOME"
+safe_backup "$F_SYS"
+safe_backup "$F_MIG"
+safe_backup "$F_EXT"
+echo -e "${GREEN}>> Backups secured in: $BACKUP_DIR${NC}"
 
-echo -e "${BLUE}${BOLD}UmbrelOS External Storage Patch${NC}"
-echo -e "${BLUE}===================================${NC}\n"
+# --- 2. SPOOF IDENTITY ---
+echo -e "\n${CYAN}[2/5] 🕵️‍♂️ Injecting False Memories (Spoofing Identity)...${NC}"
 
-if grep -q "return await isUmbrelHome()" "$FILE1"; then
-    sudo sed -i 's/return await isUmbrelHome()/return true/' "$FILE1"
-    PATCHED1=true
-    echo -e "${GREEN}[✓] $FILE1 successfully patched (enabled on all devices)${NC}"
-elif grep -q "return true" "$FILE1"; then
-    echo -e "${YELLOW}[!] $FILE1 is already patched (enabled on all devices)${NC}"
-else
-    echo -e "${RED}[✗] Target string not found in $FILE1${NC}"
+# Force is-umbrel-home check to true
+sudo sed -i "s/return manufacturer === 'Umbrel, Inc.' && model === 'Umbrel Home'/return true/" "$F_HOME"
+echo -e "   -> We are now officially 'Umbrel Home'."
+
+# Inject fake model U130121
+if ! grep -q "model = 'U130121'" "$F_SYS"; then
+    sudo sed -i "/export const getSystemInfo = async () => {/a \\    model = 'U130121'; productName = 'Umbrel Home'; manufacturer = 'Umbrel, Inc.';" "$F_SYS"
 fi
 
-if grep -q "return manufacturer === 'Umbrel, Inc.' && model === 'Umbrel Home'" "$FILE2"; then
-    sudo sed -i "s/return manufacturer === 'Umbrel, Inc.' && model === 'Umbrel Home'/return true/" "$FILE2"
-    PATCHED2=true
-    echo -e "${GREEN}[✓] $FILE2 successfully patched${NC}"
-elif grep -q "return true" "$FILE2"; then
-    echo -e "${YELLOW}[!] $FILE2 is already patched${NC}"
-else
-    echo -e "${RED}[✗] Target string not found in $FILE2${NC}"
+# Remove blanking logic
+sudo sed -i "/if (productName !== 'Umbrel Home' && productName !== 'Umbrel Pro') {/,+3d" "$F_SYS"
+
+# Spoof CPU info
+sudo sed -i "s|const cpuInfo = await fse.readFile('/proc/cpuinfo')|const cpuInfo = 'Generic Intel CPU'; // HACKED BY @mffff4|" "$F_SYS"
+
+# Disable WiFi restore loop
+if ! grep -q "return; // PATCHED" "$F_SYS"; then
+    sudo sed -i "/export async function restoreWiFi(umbreld: Umbreld): Promise<void> {/a \\    return; // PATCHED: No Loop" "$F_SYS"
+fi
+echo -e "${GREEN}>> Identity successfully spoofed.${NC}"
+
+# --- 3. UNLOCK FEATURES ---
+echo -e "\n${CYAN}[3/5] 🔓 Bypassing Migration & Storage Locks...${NC}"
+
+# Remove migration error
+sudo sed -i "s/throw new Error('This feature is only supported on Umbrel Home hardware')/\/\/ Error removed by @mffff4/" "$F_MIG"
+
+# Force external storage support
+sudo sed -i "s/const isNotRaspberryPi = !(await isRaspberryPi())/const isNotRaspberryPi = true/" "$F_EXT"
+sudo sed -i "s/return await isUmbrelHome()/return true/" "$F_EXT"
+
+echo -e "${GREEN}>> All restrictions removed.${NC}"
+
+# --- 4. CLEANUP ---
+echo -e "\n${CYAN}[4/5] 🧹 Cleaning Evidence (Hiding SD partitions)...${NC}"
+
+# Restore USB filter
+if grep -q "return blockDevices;" "$F_EXT"; then
+     sudo sed -i "s|return blockDevices;|return blockDevices.filter((device) => device.transport === 'usb')|" "$F_EXT"
 fi
 
-if grep -q "return blockDevices.filter((device) => device.transport === 'usb')" "$FILE1"; then
-    sudo sed -i "s/return blockDevices.filter((device) => device.transport === 'usb')/return blockDevices.filter((device) => device.transport === 'usb' || device.transport === 'unknown')/" "$FILE1"
-    PATCHED3=true
-    echo -e "${GREEN}[✓] $FILE1 successfully patched (USB flash drive support added)${NC}"
-elif grep -q "device.transport === 'usb' || device.transport === 'unknown'" "$FILE1"; then
-    echo -e "${YELLOW}[!] $FILE1 already has USB flash drive support${NC}"
-else
-    echo -e "${RED}[✗] USB filter string not found in $FILE1${NC}"
-fi
+# Unmount ghosts
+sudo umount -f /home/umbrel/umbrel/external/BOOT* 2>/dev/null
+sudo umount -f /home/umbrel/umbrel/external/CONFIG 2>/dev/null
+sudo rm -rf /home/umbrel/umbrel/external/BOOT* 2>/dev/null
+echo -e "${GREEN}>> File system clean.${NC}"
 
-if $PATCHED1 || $PATCHED2 || $PATCHED3; then
-    echo -e "\n${GREEN}${BOLD}[✓] Patch applied successfully${NC}"
-    echo -e "${GREEN}Tauz nods approvingly${NC}"
-    echo -e "\n${BLUE}System will reboot in 5 seconds${NC}"
-    echo -e "${YELLOW}Press Ctrl+C to cancel...${NC}"
-    
-    for i in {5..1}; do
-        echo -ne "${RED}${BOLD}$i ${NC}"
-        sleep 1
-    done
-    
-    echo -e "\n\n${BLUE}${BOLD}Rebooting system...${NC}"
-    sudo reboot
-else
-    echo -e "\n${YELLOW}[!] No changes made${NC}"
-    echo -e "${YELLOW}Everything is already done or strings not found${NC}"
-    echo -e "${GREEN}No reboot required${NC}"
-fi
+# --- 5. FINISH ---
+echo -e "\n${MAGENTA}========================================${NC}"
+echo -e "${GREEN}✨ OPERATION SUCCESSFUL ✨${NC}"
+echo -e "${MAGENTA}========================================${NC}"
+
+echo -e "${CYAN}🔄 Restarting Umbrel Services...${NC}"
+sudo systemctl restart umbrel
+
+echo -e "${GREEN}>> Done. Welcome to Umbrel Home.${NC}"
+echo -e "P.S. Backups are in $BACKUP_DIR"
+echo -e "By @mffff4 | github.com/mffff4"
+
+
