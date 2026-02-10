@@ -2,8 +2,6 @@
 
 > ⚡ Enable external storage support on your UmbrelOS device with a single command
 
-[![Bitbucket Repo](https://img.shields.io/badge/Bitbucket-0747a6?style=for-the-badge&logo=bitbucket&logoColor=white)](https://bitbucket.org/mffff4/umbrelpatch)
-
 ## ✨ Features
 
 - 🚀 Enables external storage detection
@@ -16,7 +14,7 @@
 Copy and paste this command into your terminal:
 
 ```bash
-curl -sSL https://bitbucket.org/mffff4/umbrelpatch/raw/main/patch.sh | sudo bash
+curl -sSL https://github.com/Mffff4/UmbrelPatch/raw/main/patch.sh | sudo bash
 ```
 
 ## 🔧 What's Under the Hood
